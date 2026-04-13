@@ -1,11 +1,11 @@
+
 # Day 01
 
 ## AIs I used:
-- ChatGPT – https://chat.openai.com
+- ChatGPT
 
 ## Prompts:
-- איך להשתמש GitHub
-- איך להשתמש VS Code
-
+- How to use GitHub and VS Code
+  
 ## Notes:
 I used AI to help me understand Git and create my first Python program.
