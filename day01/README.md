@@ -4,7 +4,7 @@
 - ChatGPT – https://chat.openai.com
 
 ## Prompts:
-- איך להשתמש בגיטהאב
+- איך להשתמש GitHub
 - איך להשתמש VS Code
 
 ## Notes:
