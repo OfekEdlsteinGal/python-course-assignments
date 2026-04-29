@@ -17,8 +17,6 @@ This calculation helps determine whether a process is spontaneous or not.
 * **main_cli.py**: Command-line argument version using `sys.argv`.
 * **main_gui.py**: Graphical User Interface (Tkinter).
 * **test_gibbs.py**: Verification test cases.
-* *(Optional)* initial version of the script (if you had one in day02).
-
 ---
 
 ## How to Use
