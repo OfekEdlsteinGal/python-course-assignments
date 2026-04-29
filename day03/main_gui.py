@@ -5,7 +5,17 @@ def calculate():
     dh = float(entry_dh.get())
     t = float(entry_t.get())
     ds = float(entry_ds.get())
-    result_label.config(text=str(gibbs_free_energy(dh, t, ds)))
+
+    result = gibbs_free_energy(dh, t, ds)
+
+    if result < 0:
+        message = "The reaction is spontaneous."
+    else:
+        message = "The reaction is non-spontaneous."
+
+    result_label.config(text=f"ΔG = {result} kJ/mol\n{message}")
+
+   # result_label.config(text=str(gibbs_free_energy(dh, t, ds)))
 
 root = tk.Tk()
 
