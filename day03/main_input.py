@@ -1,15 +1,28 @@
 from gibbs_lib import gibbs_free_energy
 
-delta_h = float(input("Enter ΔH: "))
-temperature = float(input("Enter T: "))
-delta_s = float(input("Enter ΔS: "))
+# Get input from user
+delta_H = float(input("Enter enthalpy change ΔH (in kJ/mol): "))
+temperature = float(input("Enter temperature (in Kelvin): "))
+delta_S = float(input("Enter entropy change ΔS (in J/mol·K): "))
 
-result = gibbs_free_energy(delta_h, temperature, delta_s)
+# Calculate using library
+delta_G = gibbs_free_energy(delta_H, temperature, delta_S)
 
-print(f"ΔG = {result} kJ/mol")
+# Print result
+print("\nResult:")
+print("ΔG =", delta_G, "kJ/mol")
 
-if result < 0:
+# Interpretation
+if delta_G < 0:
     print("The reaction is spontaneous.")
-else:
+elif delta_G > 0:
     print("The reaction is non-spontaneous.")
+else:
+    print("The reaction is at equilibrium.")
+
+
+
+
+
+
 

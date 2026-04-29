@@ -10,8 +10,10 @@ def calculate():
 
     if result < 0:
         message = "The reaction is spontaneous."
-    else:
+    elif result > 0:
         message = "The reaction is non-spontaneous."
+    else:
+        message = "The reaction is at equilibrium."
 
     result_label.config(text=f"ΔG = {result} kJ/mol\n{message}")
 
