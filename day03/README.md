@@ -6,7 +6,19 @@ This project is a computational tool designed to calculate the Gibbs Free Energy
 
 ΔG = ΔH - TΔS
 
-This calculation helps determine whether a process is spontaneous or not.
+Where:
+- ΔG = Gibbs Free Energy (kJ/mol)
+- ΔH = Enthalpy change (kJ/mol)
+- T = Temperature (K)
+- ΔS = Entropy change (J/mol·K)
+
+The program converts entropy from J to kJ and then calculates ΔG.
+Since ΔS is typically given in J/mol·K, the program converts it to kJ/mol·K before performing the calculation.
+
+The program also determines whether the reaction is:
+- Spontaneous (ΔG < 0)
+- Non-spontaneous (ΔG > 0)
+- At equilibrium (ΔG = 0)
 
 ---
 
@@ -31,11 +43,12 @@ python main_input.py
 
 The program will ask:
 
-* Enter ΔH
-* Enter T
-* Enter ΔS
+* Enter enthalpy change ΔH (in kJ/mol)
+* Enter temperature (in Kelvin)
+* Enter entropy change ΔS (in J/mol·K)
 
-After entering the values, it will calculate and display ΔG.
+After entering the values, it will calculate and display ΔG and determines whether the reaction is spontaneous or not.
+
 
 ---
 
@@ -49,9 +62,9 @@ python main_cli.py 10 300 0.05
 
 Where:
 
-* 10 = ΔH
-* 300 = T
-* 0.05 = ΔS
+* ΔH=10
+* T=300
+* ΔS=0.05 
 
 The program will output the calculated ΔG.
 
@@ -98,5 +111,3 @@ ChatGPT helped me:
 
 * Create a shared library file
 * Build three versions of the program (input, CLI, GUI)
-* Design test cases
-* Organize the project structure
