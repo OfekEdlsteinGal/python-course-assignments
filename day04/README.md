@@ -102,12 +102,12 @@ Tests passed
 
 ---
 
-## AI Interaction
+## Project Updates – Day04
 
-I used ChatGPT to help structure the project and understand how to separate the business logic from the user interface.
+* Removed the `__pycache__` files and cleaned the repository structure (Ofir Aflalo).
+* Added a calculation for the equilibrium temperature where ΔG = 0 (Noa Sharvit).
+* Added a feature that allows the user to enter the temperature in either Kelvin or Celsius. The program automatically converts the units when needed, so the user does not need to manually convert temperatures.
+* Added a `.gitignore` file to prevent unnecessary files such as `__pycache__`, `.pyc` files, and system files from being uploaded to GitHub.
 
-
-ChatGPT helped me:
-
-* Create a shared library file
-* Build three versions of the program (input, CLI, GUI)
+## AI Usage:
+AI tools were used to help understand Python syntax, debug errors, improve the program structure, and receive explanations about GitHub, `.gitignore`, and the thermodynamic calculations used in the project.
