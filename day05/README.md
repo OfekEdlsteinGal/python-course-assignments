@@ -1,18 +1,16 @@
-# Day 05 Assignment - Ferrocene Nernst Analysis
+# Day 05 Assignment - Excel Electrochemical Nernst Analysis
 
 ## Project idea
 
-For this assignment I did not have a real lab data file that I could use, so I created a fake but reasonable Excel file based on an electrochemistry example.
+For this assignment I created a fake Excel file with electrochemical data, because I did not have a real lab file that I could use.
 
-The system is the ferrocene/ferricenium redox couple:
+The fake data represents measurements of the ferrocene/ferricenium redox system:
 
 ```text
 FeCp2 ⇌ FeCp2+ + e-
 ```
 
-The goal is to calculate how the equilibrium concentration of the reduced species, FeCp2, and the oxidized species, FeCp2+, changes when the cell potential changes.
-
-This is useful because in electrochemistry we can use the measured potential to understand the ratio between the oxidized and reduced forms of a molecule.
+The program reads the Excel file, calculates the concentration of the reduced and oxidized forms using the Nernst equation, creates a graph from all the data, saves the results to a new Excel file, and prints a results summary in the terminal.
 
 ## Input file
 
@@ -22,87 +20,92 @@ The input file is:
 ferrocene_nernst_input.xlsx
 ```
 
-The Excel file contains:
+The important sheet is:
 
-- A `Dashboard` sheet that looks similar to the lecture slide.
-- A `Constants` sheet with the values used in the calculation.
-- A `Nernst_Data` sheet with potentials and calculated redox concentrations.
+```text
+Nernst_Data
+```
 
-The fake experiment is:
+The columns are:
 
-- Total ferrocene concentration = 5 mM
-- E° of ferrocene = +0.31 V vs SCE
-- n = 1 electron
-- Temperature = 25 °C = 298.15 K
+- `Sample` - sample name
+- `Potential_V_vs_SCE` - measured potential
+- `E0_V` - formal potential
+- `n` - number of electrons
+- `Temperature_K` - temperature in Kelvin
+- `Total_mM` - total concentration of ferrocene + ferricenium
 
 ## Scientific background
 
 The Nernst equation is:
 
 ```text
-Ecell = E°cell − (RT/nF) ln([Red]/[Ox])
+E = E0 + (RT/nF) ln([Ox]/[Red])
 ```
 
-For this assignment:
+For this system:
 
 ```text
-Ecell = E°cell − (RT/nF) ln([FeCp2]/[FeCp2+])
+[Ox] = [FeCp2+]
+[Red] = [FeCp2]
 ```
 
-I rearranged the equation to calculate the ratio between oxidized and reduced species:
+The program first calculates the ratio:
 
 ```text
-[Ox]/[Red] = exp((E − E°) nF / RT)
+[Ox]/[Red] = exp((E - E0)nF/RT)
 ```
 
-Because the total concentration is 5 mM:
+Then, because the total concentration is known:
 
 ```text
-Total = [Red] + [Ox]
+Total = [Ox] + [Red]
 ```
 
-So the code calculates:
+the program calculates the two concentrations separately.
+
+## Galvanic or electrolytic interpretation
+
+The program also calculates:
 
 ```text
-[Red] = Total / (1 + ratio)
-[Ox] = Total * ratio / (1 + ratio)
+Delta E = E - E0
 ```
 
-When:
+Then it gives a simple interpretation:
+
+- if `Delta E > 0`, the situation is written as `galvanic cell / spontaneous`
+- if `Delta E < 0`, the situation is written as `electrolytic cell / non-spontaneous`
+- if `Delta E = 0`, it is the `equilibrium point`
+
+This is a simplified interpretation for this assignment. In a real electrochemical cell, the full cell potential depends on both half-cells.
+
+## Output files
+
+When the program runs, it creates:
 
 ```text
-Ecell = E°cell
+ferrocene_nernst_results.xlsx
+ferrocene_nernst_plot.png
 ```
 
-then:
-
-```text
-[Red] = [Ox]
-```
-
-So for a total concentration of 5 mM:
-
-```text
-[FeCp2] = 2.5 mM
-[FeCp2+] = 2.5 mM
-```
+It also prints a summary of the calculated results in the terminal.
 
 ## Files in this folder
 
-- `ferrocene_nernst_input.xlsx` - Excel input file with fake electrochemical data and a dashboard.
-- `analyze_ferrocene_nernst.py` - main program that reads the Excel file, calculates results, and creates output.
-- `nernst_lib.py` - library file with the Nernst equation functions.
-- `test_nernst.py` - tests for the calculation and the Excel analysis.
-- `requirements.txt` - Python packages needed.
-- `ferrocene_nernst_results.xlsx` - output Excel file created by the program.
-- `ferrocene_nernst_plot.png` - output graph created by the program.
+- `ferrocene_nernst_input.xlsx` - fake input Excel file
+- `nernst_lib.py` - scientific calculation functions
+- `analyze_ferrocene_nernst.py` - main program
+- `test_nernst.py` - tests
+- `requirements.txt` - packages needed
+- `README.md` - explanation of the project
 
-## How to run the program
+## How to run
 
 Install requirements:
 
 ```bash
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 Run the analysis:
@@ -111,33 +114,14 @@ Run the analysis:
 python3 analyze_ferrocene_nernst.py
 ```
 
-Run the tests:
+The terminal should print a summary of the results.
+
+## How to run tests
 
 ```bash
 pytest
 ```
 
-## What the program does
-
-The program reads the potential values from the Excel file.  
-For every potential, it calculates the ratio:
-
-```text
-[FeCp2+]/[FeCp2]
-```
-
-Then it calculates the concentration of both species:
-
-```text
-[FeCp2]
-[FeCp2+]
-```
-
-Finally, it creates:
-
-- an Excel results file
-- a graph that shows how the concentration changes with potential
-
 ## AI usage
 
-AI tools were used to help create the fake electrochemical Excel dataset, write the Python code, organize the project files, create tests, and write the README. AI was also used to help explain the Nernst equation and to make the Excel file look similar to the lecture slide.
+AI tools were used to help create the fake Excel data, organize the Python code, add the graph, add the graph and terminal output, write tests, and explain the Nernst equation and the electrochemical interpretation.

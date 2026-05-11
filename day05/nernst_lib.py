@@ -11,9 +11,9 @@ def oxidized_reduced_ratio(potential_v, e0_v, n, temperature_k):
     For ferrocene:
         FeCp2 ⇌ FeCp2+ + e-
 
-    E = E0 - (RT/nF) ln([Red]/[Ox])
+    E = E0 + (RT/nF) ln([Ox]/[Red])
 
-    This is the same as:
+    Therefore:
         [Ox]/[Red] = exp((E - E0) nF / RT)
     """
     if n <= 0:
@@ -30,7 +30,6 @@ def redox_concentrations(potential_v, e0_v, n, temperature_k, total_conc_mm):
     Calculate the equilibrium concentrations of reduced and oxidized species.
 
     total_conc_mm = [Red] + [Ox]
-
     ratio = [Ox]/[Red]
 
     Therefore:
@@ -49,10 +48,35 @@ def redox_concentrations(potential_v, e0_v, n, temperature_k, total_conc_mm):
 
 def classify_region(potential_v, e0_v):
     """
-    Give a simple interpretation of the sample.
+    Give a simple interpretation of the redox composition.
     """
     if potential_v < e0_v - 0.05:
         return "mostly reduced"
     if potential_v > e0_v + 0.05:
         return "mostly oxidized"
     return "mixed redox region"
+
+
+def delta_e(potential_v, e0_v):
+    """
+    Calculate the difference between measured potential and formal potential.
+    """
+    return potential_v - e0_v
+
+
+def classify_cell_type(potential_v, e0_v):
+    """
+    Simple electrochemical interpretation using delta E = E - E0.
+
+    If delta E is positive, the redox direction is thermodynamically favorable,
+    so it is described here as galvanic/spontaneous.
+    If delta E is negative, the direction is not spontaneous and would require
+    external voltage, so it is described as electrolytic.
+    """
+    de = delta_e(potential_v, e0_v)
+
+    if de > 0:
+        return "galvanic cell / spontaneous"
+    if de < 0:
+        return "electrolytic cell / non-spontaneous"
+    return "equilibrium point"
