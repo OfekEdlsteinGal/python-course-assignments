@@ -1,113 +1,89 @@
-from pathlib import Path
-
-import matplotlib.pyplot as plt
 import pandas as pd
-
-from nernst_lib import (
-    redox_concentrations,
-    classify_region,
-    delta_e,
-    classify_cell_type,
-)
-
+import numpy as np
+import matplotlib.pyplot as plt
+from pathlib import Path
+from scipy.stats import linregress
+from nernst_lib import redox_concentrations, delta_e
 
 def analyze_excel(input_file, output_excel, output_plot):
-    """
-    Read the Excel input file, calculate redox concentrations from the
-    Nernst equation, save an Excel results file, and create a graph.
-    """
+    # קריאת נתוני המעבדה מקובץ האקסל
     df = pd.read_excel(input_file, sheet_name="Nernst_Data")
 
     results = []
     for _, row in df.iterrows():
+        # חילוץ פרמטרים מכל שורה
         potential = float(row["Potential_V_vs_SCE"])
         e0 = float(row["E0_V"])
         n = int(row["n"])
-        temperature = float(row["Temperature_K"])
+        temp = float(row["Temperature_K"])
         total = float(row["Total_mM"])
 
-        reduced, oxidized, ratio = redox_concentrations(
-            potential,
-            e0,
-            n,
-            temperature,
-            total
-        )
-
-        sample_name = row["Sample"] if "Sample" in df.columns else f"sample_{len(results) + 1}"
-        de = delta_e(potential, e0)
-
+        # חישוב ריכוזים על בסיס משוואת נרנסט (מתוך הספרייה)
+        red, ox, ratio = redox_concentrations(potential, e0, n, temp, total)
+        
         results.append({
-            "Sample": sample_name,
-            "Potential_V_vs_SCE": potential,
-            "E0_V": e0,
-            "Delta_E_V": de,
-            "FeCp2_reduced_mM": reduced,
-            "FeCp2_plus_oxidized_mM": oxidized,
-            "Ox_Red_ratio": ratio,
-            "Redox_Interpretation": classify_region(potential, e0),
-            "Cell_Type": classify_cell_type(potential, e0),
+            "Sample": row["Sample"] if "Sample" in df.columns else "Unknown",
+            "Potential_V": potential,
+            "Log_Ratio": np.log10(ratio), # נדרש לרגרסיה ליניארית
+            "FeCp2_reduced_mM": red,
+            "FeCp2_plus_oxidized_mM": ox,
+            "Ox_Red_ratio": ratio
         })
 
     result_df = pd.DataFrame(results)
 
-    with pd.ExcelWriter(output_excel, engine="openpyxl") as writer:
-        result_df.to_excel(writer, sheet_name="Calculated_Results", index=False)
+    # --- ניתוח מעבדתי: רגרסיה ליניארית ---
+    # אנחנו בודקים את הקשר: E = E0 + Slope * log10(Ox/Red)
+    # השיפוע התיאורטי עבור n=1 בטמפ' החדר הוא ~0.059V
+    slope, intercept, r_value, p_value, std_err = linregress(result_df["Log_Ratio"], result_df["Potential_V"])
+    
+    print("-" * 30)
+    print(f"Laboratory Analysis Results:")
+    print(f"Experimental Slope: {slope:.4f} V/decade")
+    print(f"Calculated E0: {intercept:.4f} V")
+    print(f"R-squared (Fit Quality): {r_value**2:.4f}")
+    print("-" * 30)
 
-    create_graph(result_df, output_plot)
-
+    # שמירת התוצאות לאקסל חדש
+    result_df.to_excel(output_excel, index=False)
+    
+    # יצירת גרף משולב
+    create_combined_plot(result_df, slope, intercept, output_plot)
+    
     return result_df
 
+def create_combined_plot(df, slope, intercept, output_plot):
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
 
-def create_graph(result_df, output_plot):
-    """
-    Create one graph from all data points in the Excel file.
-    """
-    plt.figure(figsize=(9, 5.5))
+    # גרף 1: ריכוזים מול פוטנציאל
+    ax1.plot(df["Potential_V"], df["FeCp2_reduced_mM"], 'o-', label="Reduced")
+    ax1.plot(df["Potential_V"], df["FeCp2_plus_oxidized_mM"], 's-', label="Oxidized")
+    ax1.set_xlabel("Potential (V)")
+    ax1.set_ylabel("Concentration (mM)")
+    ax1.set_title("Species Distribution")
+    ax1.legend()
 
-    plt.plot(
-        result_df["Potential_V_vs_SCE"],
-        result_df["FeCp2_reduced_mM"],
-        marker="o",
-        label="FeCp2 reduced"
-    )
+    # גרף 2: ליניאריזציה של נרנסט 
+    ax2.scatter(df["Log_Ratio"], df["Potential_V"], color='black', label="Data Points")
+    fit_line = slope * df["Log_Ratio"] + intercept
+    ax2.plot(df["Log_Ratio"], fit_line, 'r--', label=f"Fit (Slope={slope:.3f}V)")
+    ax2.set_xlabel("log10([Ox]/[Red])")
+    ax2.set_ylabel("Potential (V)")
+    ax2.set_title("Nernst Plot Linearization")
+    ax2.legend()
 
-    plt.plot(
-        result_df["Potential_V_vs_SCE"],
-        result_df["FeCp2_plus_oxidized_mM"],
-        marker="o",
-        label="FeCp2+ oxidized"
-    )
-
-    plt.axvline(
-        x=result_df["E0_V"].iloc[0],
-        linestyle="--",
-        label="E0"
-    )
-
-    plt.xlabel("Potential (V vs SCE)")
-    plt.ylabel("Concentration (mM)")
-    plt.title("Ferrocene/Ferricenium concentrations from the Nernst equation")
-    plt.legend()
     plt.tight_layout()
-    plt.savefig(output_plot, dpi=200)
-    plt.close()
-
+    plt.savefig(output_plot)
+    print(f"Analysis plots saved to {output_plot}")
 
 if __name__ == "__main__":
-    input_file = Path("ferrocene_nernst_input.xlsx")
-    output_excel = Path("ferrocene_nernst_results.xlsx")
-    output_plot = Path("ferrocene_nernst_plot.png")
-
-    result_df = analyze_excel(
-        input_file,
-        output_excel,
-        output_plot
-    )
-
-    print("Analysis finished successfully.")
-    print("Created:", output_excel)
-    print("Created:", output_plot)
-    print()
-    print("Summary of calculated results:")
-    print(result_df.to_string(index=False))
+    # מוצא את הנתיב של התיקייה שבה נמצא הסקריפט הנוכחי
+    base_path = Path(__file__).parent
+    
+    # מגדיר את שמות הקבצים יחסית לתיקייה הזו
+    input_file = base_path / "ferrocene_nernst_input.xlsx"
+    output_excel = base_path / "results.xlsx"
+    output_plot = base_path / "analysis_plot.png"
+    
+    # הרצת הניתוח
+    analyze_excel(input_file, output_excel, output_plot)
