@@ -27,14 +27,12 @@ A plot of `E` vs `log10([Ox]/[Red])` should yield a linear relationship with a t
 - `requirements.txt`: Project dependencies.
 - `README.md`: Project documentation.
 
+
+## AI Usage 
+AI tools (ChatGPT) were used to help understand Python syntax, debug errors, improve the program structure, and receive explanations about Python libraries, how to create excel file.
+
+
 ## Installation & Usage
 Ensure you have Python installed, then run:
 ```bash
 pip3 install -r requirements.txt
-
-## AI Usage 
-AI tools (ChatGPT) were used to help understand Python syntax, debug errors, improve the program structure, and receive explanations about Python libraries, how to create excel file,
-
-
-
-
