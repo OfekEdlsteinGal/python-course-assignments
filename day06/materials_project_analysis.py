@@ -25,7 +25,7 @@ def classify_band_gap(band_gap):
 
 
 # Paste your Materials Project API key here
-API_KEY = "PASTE_YOUR_API_KEY_HERE"
+API_KEY = "X2ukUPKYyONkbM0bws8FmEcWGpqKD2OJ"
 
 
 fields = [
