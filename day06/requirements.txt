@@ -1,0 +1,4 @@
+mp-api
+pandas
+matplotlib
+python-dotenv
