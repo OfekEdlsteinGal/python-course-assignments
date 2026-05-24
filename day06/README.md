@@ -68,4 +68,4 @@ The program will create:
 
 ## AI usage
 
-AI tools were used to help choose a scientific database, understand how to use the Materials Project API, plan the structure of the Python program, debug the logic, improve the README, and explain the scientific meaning of the downloaded data. AI was also used to help organize the project files in a clear way and make the code easier to understand.
+I used Gemini and ChatGPT. AI tools were used to help choose a scientific database, understand how to use the Materials Project API, plan the structure of the Python program, debug the logic, improve the README, and explain the scientific meaning of the downloaded data. AI was also used to help organize the project files in a clear way and make the code easier to understand.
