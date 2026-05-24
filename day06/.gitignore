@@ -2,4 +2,3 @@ __pycache__/
 *.pyc
 .env
 materials_project_results.csv
-materials_project_bandgap_plot.png
